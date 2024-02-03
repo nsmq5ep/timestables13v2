@@ -1,0 +1,216 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../sEzTlxXQNJX4.com/buefy%400.9.27/dist/buefy.min.css">
+  <link rel="stylesheet" href="../../DfkQGpapJ0oK.app/LnBab2O1QQ7i.css">
+  <title>TimesTables</title>
+
+</head>
+
+<body>
+  <div id="nav">
+    <h3 class="is-size-2">
+      <router-link to="/">Ayaansh's Times Tables Practice</router-link>
+    </h3>
+    <br>
+  </div>
+  <div id="app">
+    <template>
+      <div class="home p-3">
+        <div class="buttons" v-if="gameRunning">
+          <b-button type="is-primary" size="is-medium" outlined="" v-for="x in arrNum" :key="x" @click="nextOne(x)">
+            <p v-if="xIsNotSpecial(x)" class="is-size-4">{{ x }}</p>
+            <p v-else="" class="has-text-danger is-size-3">{{ x }}</p>
+          </b-button>
+        </div>
+        <div v-else="" class="is-size-4">
+          <div class="boxBlack">
+            <span v-if="wrongAnswers.length > 0">These are the questions you need to practice</span>
+            <br><br><span v-for="(y,index) in wrongAnswers" :key="y"
+              class="px-4 py-2 has-text-danger has-background-dark">
+              <span class="has-text-primary-light">{{ index+1 }})</span> {{ y }}
+            </span><br><br><br>
+          </div>
+        </div>
+        <section v-if="gameRunning" class="hero is-medium is-link">
+          <div class="hero-body">
+            <p v-if="timerShow && !showTryAgain" class="subtitle">
+              time left :
+              <span class="px-4 py-2 has-text-danger has-background-dark">{{ timeLeft }}</span>
+              seconds <br><br><br>
+            </p>
+            <p v-if="showTryAgain" class="subtitle">
+              <span class="px-4 py-2 has-text-danger has-background-dark">Wrong answer keep guessing</span>
+              <br><br><br>
+            </p>
+            <p v-if="coverBlue" class="title"><br></p>
+            <p class="title">
+              <span class="is-size-2">{{ currentQuestion }}</span>
+              <br>
+            </p>
+            <p class="subtitle">
+              {{ underLine }}
+              <br>
+              score: {{ score }}/{{ numQuestions }} (
+              {{ Math.round((score / numQuestions) * 100) }} % )
+            </p>
+            <p v-if="coverBlue" class="subtitle"></p>
+          </div>
+        </section>
+        <section v-else="" class="hero is-medium is-link">
+          <div class="hero-body">
+            <br><br><br>
+            <p class="subtitle"><br><br></p>
+            <p class="title">Game over</p>
+            <p class="subtitle">-------------------------</p>
+            <p v-if="validTotal" class="title">
+              score: {{ score }}/{{ numQuestions }} (
+              {{ Math.round((score / numQuestions) * 100) }} % )
+            </p>
+            <br><br>
+          </div>
+        </section>
+      </div>
+    </template>
+  </div>
+  <script src="../../ozGytHHoArWW.net/npm/vue%402.6.12/dist/vue.js"></script>
+  <script src="../../sEzTlxXQNJX4.com/buefy%400.9.27/dist/buefy.min.js"></script>
+  <script>
+    let numArr = [];
+    const timerDuration = 19; // Create a variable to hold the value 16
+  
+    for (let i = 1; i < 14 * 12; i++) {
+      numArr[i - 1] = i;
+    }
+  
+    var application = new Vue({
+      el: '#app',
+      created() {
+        this.currentQuestion = `${this.firstNum()} ${this.multiOperator()} ${this.secondNum()}`;
+        var intervalID = setInterval(() => {
+          this.timeLeft = this.timeLeft - 1;
+          if (this.timeLeft === 0) {
+            this.gameRunning = false;
+            clrTimer();
+          }
+        }, 1000);
+  
+        function clrTimer() {
+          clearInterval(intervalID);
+        }
+      },
+      data() {
+        return {
+          gameRunning: true,
+          timeLeft: timerDuration, // Use the variable for initial value
+          validTotal: false,
+          arrNum: numArr,
+          currentQuestion: "",
+          tempNum: 1,
+          currentFirstNum: 1,
+          currentSecondNum: 1,
+          underLine: "------------",
+          score: 0,
+          totalClicks: 0,
+          wrongClicks: 0,
+          newQuestionFlag: true,
+          timerShow: true,
+          stopPenality: false,
+          wrongAnswers: [],
+          showTryAgain: false,
+          coverBlue: false,
+        };
+      },
+      methods: {
+        randomIntFromInterval(min, max) {
+          return Math.floor(Math.random() * (max - min + 1) + min);
+        },
+        xIsNotSpecial(x) {
+          return x % 10 !== 0;
+        },
+        nextOne(x) {
+          this.timeLeft = timerDuration; // Use the variable
+          this.newQuestionFlag = false;
+          this.totalClicks += 1;
+          this.validTotal = true;
+          this.underLine = "------------";
+  
+          this.tempNum = this.currentFirstNum * this.currentSecondNum;
+  
+          if (x === this.tempNum) {
+            this.showTryAgain = false;
+            this.stopPenality = false;
+            this.timerShow = false;
+            this.newQuestionFlag = true;
+            this.total += 1;
+            this.score += 1;
+            this.underLine = "------------------------------------------";
+            this.currentQuestion = `Correct: ${this.currentFirstNum} x ${this.currentSecondNum} = ${this.currentFirstNum * this.currentSecondNum}`;
+            this.coverBlue = true;
+            setTimeout(() => {
+              this.coverBlue = false;
+              this.currentQuestion = `${this.firstNum()} ${this.multiOperator()} ${this.secondNum()}`;
+              this.underLine = "------------";
+              this.timeLeft = timerDuration; // Use the variable
+              this.timerShow = true;
+            }, 3000);
+          } else {
+            this.showTryAgain = true;
+            setTimeout(() => {
+              this.showTryAgain = false;
+              this.timeLeft = timerDuration; // Use the variable
+            }, 2000);
+            if (!this.stopPenality) {
+              this.wrongAnswers.push(this.currentQuestion);
+              if (this.score !== 0) {
+                this.score = this.score - 1;
+              }
+            }
+            this.stopPenality = true;
+            this.wrongClicks += 1;
+          }
+        },
+        firstNum() {
+  this.currentFirstNum = this.getRandomNumber();
+  return this.currentFirstNum;
+},
+getRandomNumber() {
+  var numbers = [13, 4, 13, 6, 7, 8, 9, 13, 13, 11, 12, 13, 12, 12];
+  var index = Math.floor(Math.random() * numbers.length);
+  return numbers[index];
+},
+
+        secondNum() {
+          this.currentSecondNum = this.randomIntFromInterval(2, 12);
+          if (this.currentSecondNum === 10) {
+            this.currentSecondNum = 12;
+          }
+          if (this.currentSecondNum === 11) {
+            this.currentSecondNum = 9;
+          }
+          if (this.currentSecondNum === 2) {
+            this.currentSecondNum = 12;
+          }
+          if (this.currentFirstNum <= 5 && this.currentSecondNum <= 4) {
+            this.currentSecondNum = this.currentSecondNum + 4;
+          }
+          return this.currentSecondNum;
+        },
+        multiOperator() {
+          return "x";
+        },
+      },
+      computed: {
+        numQuestions() {
+          return this.totalClicks - this.wrongClicks;
+        },
+      },
+    })
+  </script>
+  
+</body>
+
+</html>
